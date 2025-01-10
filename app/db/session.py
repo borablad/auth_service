@@ -4,9 +4,9 @@ from app.core.config import settings
 
 
 # Настройка подключения к базе данных
-engine = create_engine(settings.DATABASE_URL, connect_args={"check_same_thread": False})
+DATABASE_URL = settings.DATABASE_URL
+engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 # Зависимость для получения сессии базы данных
 def get_db():

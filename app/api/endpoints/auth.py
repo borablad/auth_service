@@ -1,7 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from app.db.session import get_db  # Добавьте эту строку
+from app.services.auth_service import authenticate_user, create_user
 from app.schemas.auth import UserCreate
-from app.services.auth_service import create_user, authenticate_user
+from app.core.security import create_access_token
+
 
 router = APIRouter()
 
@@ -17,3 +20,8 @@ def login(username: str, password: str, db: Session = Depends(get_db)):
 def register(user: UserCreate, db: Session = Depends(get_db)):
     new_user = create_user(db, user)
     return new_user
+
+@router.get("/users", summary="Get all users", description="Endpoint accessible only by admins.")
+def get_all_users(db: Session = Depends(get_db), current_user: User = Depends(is_admin)):
+    users = db.query(User).all()
+    return users
